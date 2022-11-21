@@ -962,7 +962,7 @@ static const char *__pyx_filename;
 
 
 static const char *__pyx_f[] = {
-  "ai\\players.pyx",
+  "ai/players.pyx",
   "stringsource",
 };
 
@@ -1915,7 +1915,7 @@ static const char __pyx_k_moves_to_make[] = "moves_to_make";
 static const char __pyx_k_new_root_node[] = "new_root_node";
 static const char __pyx_k_reduce_cython[] = "__reduce_cython__";
 static const char __pyx_k_AssertionError[] = "AssertionError";
-static const char __pyx_k_ai_players_pyx[] = "ai\\players.pyx";
+static const char __pyx_k_ai_players_pyx[] = "ai/players.pyx";
 static const char __pyx_k_current_height[] = "current_height";
 static const char __pyx_k_evaluate_board[] = "evaluate_board";
 static const char __pyx_k_get_leaf_nodes[] = "get_leaf_nodes";
