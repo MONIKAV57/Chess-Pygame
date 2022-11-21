@@ -315,20 +315,19 @@ class MiniMaxPlayer(PlayerWithEvaluation):
             moves_to_make = []
 
             while _node is not root_node:
+                if _node is None:
+                    break
                 moves_to_make.append(_node)
 
                 _node = _node.parent
-
-                if _node is None:
-                    break
             
             print("This node's parents are: ")
             print(moves_to_make)
 
             while moves_to_make:
                 move = moves_to_make.pop()
-                print(f"Executing the move node: {move}")
-                _dummy_board.push(move.data.move)
+                if move.data.move:
+                    _dummy_board.push(move.data.move)
 
             try:
                 print("Creating subtree for this leaf node")
