@@ -3,3 +3,4 @@ environment/
 ipython_history.md
 database.sqlite
 test.py
+article/
