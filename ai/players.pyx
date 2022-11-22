@@ -5,6 +5,8 @@ import copy
 import random
 import re
 from pprint import pprint
+import pyximport
+pyximport.install()
 
 import chess
 from gui_components.board import ChessBoard
