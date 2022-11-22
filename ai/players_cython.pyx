@@ -83,7 +83,7 @@ cdef class MoveNodeData:
     cdef int evaluation
     cdef short fullmove_number
 
-    def __init__(self, move: chess.Move=None, evaluation: int=0, fullmove_number: int=None) -> None:
+    def __init__(self, move: chess.Move=None, evaluation: int=0, fullmove_number: int=0) -> None:
         self.move = move
         self.evaluation = evaluation
         self.fullmove_number = fullmove_number
