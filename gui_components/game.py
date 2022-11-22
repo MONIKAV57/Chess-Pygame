@@ -23,8 +23,10 @@ class ChessGame:
         "white": (255, 255, 255),
         "black": (0, 0, 0),
         "default": {
-            "dark": (100, 100, 100),
-            "light": (245, 245, 245)
+            # "dark": (100, 100, 100),
+            "dark": (118, 150, 86),
+            "light": (255, 255, 255)
+            # "light": (245, 245, 245)
         },
         "move_highlight": (50, 50, 50)
     }
@@ -38,7 +40,8 @@ class ChessGame:
     def __init__(
         self, screen: pygame.Surface, players: dict, 
         show_ranks_and_files=True, show_captured_pieces=True, screen_width=500, screen_height=500, 
-        origin: tuple=None, board=None
+        origin: tuple=None, board=None, light_square_color=COLORS["default"]["light"], 
+        dark_square_color=COLORS["default"]["dark"], move_highlight_color=COLORS["move_highlight"]
     ) -> None:
         self.players = players
         self.show_ranks_and_files = show_ranks_and_files
@@ -58,7 +61,7 @@ class ChessGame:
         if board is None:
             board = chess.Board()
 
-        self.board = self.create_gui_chess_board(board)
+        self.board = self.create_gui_chess_board(board, light_square_color, dark_square_color)
 
         self.source_position = None
         self.first_move_has_been_played = False
@@ -67,27 +70,25 @@ class ChessGame:
 
         self.ai_playing = False
 
-        print(f"Board rectangle is: {self.board.rect}")
-
-    def create_gui_chess_board(self, board: chess.Board) -> ChessBoard:
+    def create_gui_chess_board(self, board: chess.Board, light_square_color, dark_square_color) -> ChessBoard:
         dimensions = self.get_board_dimensions()
         left = ((self.screen_width - dimensions[0]) / 2) + self.origin[0]
         top = ( (self.screen_height -dimensions[1]) / 2 ) + self.origin[1]
 
         chess_board = ChessBoard(
             left, top, dimensions[0], dimensions[1], 
-            light_square_color=self.COLORS[self.color_scheme]["light"], dark_square_color=self.COLORS[self.color_scheme]["dark"], 
+            light_square_color=light_square_color, dark_square_color=dark_square_color, 
             board=board
         )
         return chess_board
     
     @property
     def light_square_color(self) -> tuple:
-        return self.COLORS[self.color_scheme]['light']
+        return self.board.light_square_color
 
     @property
     def dark_square_color(self) -> tuple:
-        return self.COLORS[self.color_scheme]['dark']
+        return self.board.dark_square_color
 
     def __get_promotion_pieces_for_color(color):
         return [
@@ -342,34 +343,34 @@ class ChessGame:
 
         #     self.screen.blit(text, text_rect)
 
-        # if 1:
-        #     print("Drawing promotion pieces")
-        #     # promotion
-        #     transparent_backdrop.fill((0, 0, 0, 140))
-        #     self.screen.blit(transparent_backdrop, (0, 0))
+        if 0:
+            print("Drawing promotion pieces")
+            # promotion
+            transparent_backdrop.fill((0, 0, 0, 140))
+            self.screen.blit(transparent_backdrop, (0, 0))
             
-        #     pawn_promotion_rectangle = pygame.Rect(
-        #         0, 0, board_square_size * 4, board_square_size
-        #     )
-        #     board_rectangle = self.board.rect
+            pawn_promotion_rectangle = pygame.Rect(
+                0, 0, board_square_size * 4, board_square_size
+            )
+            board_rectangle = self.board.rect
 
-        #     for i in range(2):
-        #         pawn_promotion_rectangle.centerx = board_rectangle.centerx
-        #         pawn_promotion_rectangle.centery = (
-        #             self.board.squares[0][0].centery 
-        #             if i == 0 else 
-        #             self.board.squares[7][0].centery
-        #         )
+            for i in range(2):
+                pawn_promotion_rectangle.centerx = board_rectangle.centerx
+                pawn_promotion_rectangle.centery = (
+                    self.board.squares[0][0].centery 
+                    if i == 0 else 
+                    self.board.squares[7][0].centery
+                )
 
-        #         promotion_pieces = ChessGame.__get_promotion_pieces_for_color("w" if i == 0 else "b")
+                promotion_pieces = ChessGame.__get_promotion_pieces_for_color("w" if i == 0 else "b")
 
-        #         for index, piece in enumerate(promotion_pieces):
-        #             square = pygame.Rect(
-        #                 pawn_promotion_rectangle.left + (index * board_square_size), 
-        #                 pawn_promotion_rectangle.centery, board_square_size, board_square_size
-        #             )
-        #             draw_rectangle(square, BLACK_COLOR if i==0 else WHITE_COLOR, 1 )
-        #             draw_piece(piece, rect=square)
+                for index, piece in enumerate(promotion_pieces):
+                    square = pygame.Rect(
+                        pawn_promotion_rectangle.left + (index * board_square_size), 
+                        pawn_promotion_rectangle.centery, board_square_size, board_square_size
+                    )
+                    draw_rectangle(square, BLACK_COLOR if i==0 else WHITE_COLOR, 1 )
+                    draw_piece(piece, rect=square)
 
     def play_sound(self):
         if self.board.board.is_checkmate():

@@ -132,7 +132,6 @@ class AIPlayer:
         return board_copy
 
     def evaluate_board(self, board: chess.Board=None) -> int:
-        print("Calling evaluate_board method")
         if board is None: 
             board = self.board
 
