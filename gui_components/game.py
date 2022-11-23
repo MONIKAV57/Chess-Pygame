@@ -17,7 +17,7 @@ from gui_components.components import BorderedRectangle
 
 class ChessGame:
     BOARD_DIMENSIONS = (400, 400)
-    BOARD_OUTERMOST_BORDER_DIMENSIONS = (500, 500)
+    BOARD_OUTERMOST_BORDER_DIMENSIONS = (450, 450)
 
     COLORS = {
         "white": (255, 255, 255),
@@ -72,7 +72,8 @@ class ChessGame:
 
     def create_gui_chess_board(self, board: chess.Board, light_square_color, dark_square_color) -> ChessBoard:
         dimensions = self.get_board_dimensions()
-        left = ((self.screen_width - dimensions[0]) / 2) + self.origin[0]
+        # left = ((self.screen_width - dimensions[0]) / 2) + self.origin[0]
+        left = self.origin[0] + 20 + ( (self.BOARD_OUTERMOST_BORDER_DIMENSIONS[0] - self.BOARD_DIMENSIONS[0]) / 2 )
         top = ( (self.screen_height -dimensions[1]) / 2 ) + self.origin[1]
 
         chess_board = ChessBoard(
@@ -204,8 +205,9 @@ class ChessGame:
         ranks = self.board.squares
 
         # getting the coordinates of the left and top of the outermost border
-        left = (self.screen_width - self.BOARD_OUTERMOST_BORDER_DIMENSIONS[0]) // 2 + self.origin[0]
-        top = ( self.screen_width - self.BOARD_OUTERMOST_BORDER_DIMENSIONS[1] ) // 2 + self.origin[1]
+        # left = (self.screen_width - self.BOARD_OUTERMOST_BORDER_DIMENSIONS[0]) // 2 + self.origin[0]
+        left = self.origin[0] + 20
+        top = ( self.screen_height - self.BOARD_OUTERMOST_BORDER_DIMENSIONS[1] ) // 2 + self.origin[1]
 
         outermost_border_width = self.BOARD_OUTERMOST_BORDER_DIMENSIONS[0]
         outermost_border_height = self.BOARD_OUTERMOST_BORDER_DIMENSIONS[1]
@@ -213,10 +215,18 @@ class ChessGame:
         # the difference in sizes between the inner and outer rectangles
         size = outermost_border_width - self.BOARD_DIMENSIONS[0] - 2
         
+        # draw a rectangle around the board
         board_bordered_rectangle = BorderedRectangle(
             left, top, outermost_border_width, outermost_border_height, 
             self.COLORS["white"], self.dark_square_color, size
         )
+
+        # rectangle to contain the moves made during the game
+        moves_bordered_rectangle = BorderedRectangle(
+            board_bordered_rectangle.outer_rectangle.right, top, outermost_border_width, outermost_border_height, 
+            self.COLORS["white"], self.COLORS["white"], size
+        )
+
         draw_bordered_rectangle(board_bordered_rectangle)
 
         # draw the inner rectangle with a different color
@@ -302,7 +312,7 @@ class ChessGame:
                     , captured_pieces_rectangle_height
                 ),
                 "w": pygame.Rect( 
-                    board_bottom_left[0], board_bottom_left[1] + 20, self.board.rect.width
+                    board_bottom_left[0], board_bottom_left[1], self.board.rect.width
                     , captured_pieces_rectangle_height
                 )
             }

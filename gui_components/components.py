@@ -1,6 +1,7 @@
+import chess
 import pygame
 
-class BorderedRectangle():
+class BorderedRectangle:
     """
     An object that contains 2 pygame.Rect object, one put inside the other
     """
@@ -21,3 +22,15 @@ class BorderedRectangle():
             left+(border_width / 2), top+(border_width/2), 
             width - border_width, height - border_width
         )
+
+class MoveContainer:
+    def __init__(self, screen, rect, moves=None) -> None:
+        self.screen = screen
+        self.rect = rect
+
+        self.moves = [] if moves is None else moves
+
+    def add_move(self, move: chess.Move):
+        pass
+
+    def draw(self,)
