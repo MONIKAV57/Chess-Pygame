@@ -433,7 +433,10 @@ class ChessGame:
     def start(self):
         running = True
 
+        clock = pygame.time.Clock()
+
         while running:
+            clock.tick(60)
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     running = False
