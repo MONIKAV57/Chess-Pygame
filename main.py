@@ -255,10 +255,12 @@ def click_handler(position):
                 # chess_board.play( SOURCE_POSITION, position )
                 play(SOURCE_POSITION, position)
                 SOURCE_POSITION = None
+                POSSIBLE_MOVES = None
                 
                 current_player = players[TURN]
     # else:
     #     play()
+
 while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:

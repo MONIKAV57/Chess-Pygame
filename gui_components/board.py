@@ -11,7 +11,7 @@ class Square(pygame.Rect):
         self.border_color = border_color
         self.piece = piece
         self.is_possible_move = False
-
+        
     def toggle_is_possible_move(self):
         self.is_possible_move = not self.is_possible_move
         return self
@@ -30,6 +30,7 @@ class ChessSquare(Square):
         super().__init__(left, top, width, height, background_color, border_color, piece)
         self.file_number = file_number
         self.rank_number = rank_number
+
         self.ranks = list( str(i) for i in range(1, 9) )
         self.files = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']
 
@@ -106,7 +107,14 @@ class ChessBoard(Board):
         print(self.board)
         self.rect = pygame.Rect(left, top, width, height)
 
+        self.is_flipped = False
+        is_flipped = bool(kwargs["flipped"]) if "flipped" in kwargs else False
+
         self.create_squares()
+
+        if is_flipped:
+            self.flip()
+            # self.is_flipped = True
         
         self.captured_pieces = {
             "w": [],
@@ -119,8 +127,6 @@ class ChessBoard(Board):
         
         self.previous_square_highlight_color = previous_square_highlight_color
         self.current_square_highlight_color = current_square_highlight_color
-
-        self.is_flipped = bool(kwargs["flipped"]) if "flipped" in kwargs else False
         
         # set to True if a pawn has the right to promote and has to choose which piece it wants to promote to
         self.awaiting_promotion = False
@@ -165,6 +171,7 @@ class ChessBoard(Board):
         """
         string = self.board.__str__()
         ranks_inverted = string.split('\n')#[::-1]
+        ranks_inverted = ranks_inverted[::-1] if self.is_flipped else ranks_inverted
 
         for i in range(self.number_of_rows):
             self.squares.append( [] )
@@ -192,20 +199,19 @@ class ChessBoard(Board):
         board_rect = pygame.Rect(self.left, self.top, self.width, self.height)
 
         for (i, rank) in enumerate(self.squares):
-            print(f"Flipping the squares on rank: {8 - i}")
             for (j, square) in enumerate(rank):
                 square: ChessSquare = square
                 _old = square.__repr__()
 
-                square.x += (7 - j) * self.square_size
-                square.y += (7 - i) * self.square_size
+                square.left = (7 - j) * self.square_size + board_rect.left
+                square.top = (7 - i) * self.square_size + board_rect.top
                 
                 if not square.colliderect(board_rect):
                     print("Square is out of bounds of the board")
                     print(f"The board rectangle is: {board_rect}. The square rectangle is: {square}")
 
-                else:
-                    print(f"Square was flipped successfully. Old coordinates: {_old}, new: {square}")
+                # else:
+                #     print(f"Square was flipped successfully. Old coordinates: {_old}, new: {square}")
 
         self.is_flipped = not self.is_flipped
 

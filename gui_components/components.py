@@ -32,5 +32,3 @@ class MoveContainer:
 
     def add_move(self, move: chess.Move):
         pass
-
-    def draw(self,)
