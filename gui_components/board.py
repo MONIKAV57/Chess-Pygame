@@ -92,7 +92,7 @@ class ChessBoard(Board):
         light_square_color: str=(245, 245, 245), dark_square_color: str=(100, 100, 100), 
         previous_square_highlight_color=(186, 202, 43),
         current_square_highlight_color=(246, 246, 105),
-        board: chess.Board=None, move_hints=True, **kwargs
+        board: chess.Board=None, move_hints=True, game=None, **kwargs
     ) -> None:
         super().__init__(
             8, 8, left, top, width, height, 
@@ -101,10 +101,11 @@ class ChessBoard(Board):
         self.__set_square_size()
         self.light_square_color = light_square_color
         self.dark_square_color = dark_square_color
-        self.board = board
+        
+        self.board = board if board else chess.Board()
+        
         self.move_hints = move_hints
-        print('The current board is')
-        print(self.board)
+
         self.rect = pygame.Rect(left, top, width, height)
 
         self.is_flipped = False
@@ -130,8 +131,6 @@ class ChessBoard(Board):
         
         # set to True if a pawn has the right to promote and has to choose which piece it wants to promote to
         self.awaiting_promotion = False
-
-        # self.flip()
     
     def __set_square_size(self):
         self.__square_size = self.height // 8
@@ -391,7 +390,6 @@ class ChessBoard(Board):
         if isinstance(move, str):
             self.board.push_san(move)
         elif isinstance(move, chess.Move):
-            
             if self.board.is_capture(move):
                 destination_square: ChessSquare = self.get_square_from_chess_square(move.to_square)
                 piece: Piece = destination_square.piece

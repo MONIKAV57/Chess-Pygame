@@ -1,10 +1,13 @@
 import chess
+import chess.pgn
+
 import pygame
 from pygame import mixer
 import pygame_gui
 
 from pygame_gui.ui_manager import UIManager
 from pygame_gui.elements.ui_panel import UIPanel
+from pygame_gui.elements.ui_text_box import UITextBox
 from pygame_gui.elements.ui_image import UIImage
 
 from gui_components.board import ChessBoard
@@ -13,7 +16,7 @@ from gui_components.components import BorderedRectangle
 mixer.init()
 
 LIGHT_COLOR = (245, 245, 245)
-DARK_COLOR = ( 100, 100, 100 )
+DARK_COLOR = (10, 100, 20)
 WHITE_COLOR = (255, 255, 255)
 BLACK_COLOR = (0, 0, 0)
 
@@ -40,7 +43,7 @@ IS_FIRST_MOVE = True
 
 
 class ChessApp:
-    def __init__(self, color="black"):
+    def __init__(self, color="white"):
         pygame.init()
 
         self.root_window_surface = pygame.display.set_mode((912, 600))
@@ -51,10 +54,15 @@ class ChessApp:
         self.clock = pygame.time.Clock()
         self.is_running = True
 
-        self.pgn_window = UIPanel(
+        self.pgn_panel = UIPanel(
             pygame.Rect(576+24, 12, 300, 576),
             starting_layer_height=4,
             manager=self.ui_manager
+        )
+        self.pgn_text = UITextBox(
+            relative_rect=pygame.Rect((0, 0), self.pgn_panel.get_container().get_size()),
+            html_text="",
+            container=self.pgn_panel
         )
 
         self.board = chess.Board()
@@ -156,14 +164,54 @@ class ChessApp:
                         raise e
                 
                 if square.is_possible_move and board.move_hints:
-                    print("Drawing a circle in a possible move square")
-                    print(square)
                     # draw a circle in the center of the square
                     pygame.draw.circle( 
                         self.screen, (50, 50, 50), 
                         square.center,
                         board.square_size*0.25
                     )
+
+    def play_sound(self, board=None):
+        if not board:
+            board = self.board
+
+        if board.is_checkmate():
+            mixer.Sound.play(checkmate_sound)
+        
+        elif board.is_check():
+            mixer.Sound.play(check_sound)
+        
+        elif board.is_stalemate():
+            pass
+        
+        else:
+            mixer.Sound.play(move_sound)
+
+    def play(self, source_coordinates: tuple=None, destination_coordinates: tuple=None):
+        global TURN, IS_FIRST_MOVE
+        board = self.board
+
+        turn = board.turn
+
+        turns_taken[turn] = not turns_taken[turn]
+        print(f"Setting {turns_taken[turn]} to {not turns_taken[turn]}")
+
+        if source_coordinates and destination_coordinates:
+            # user to play
+            print("User is making move")
+            self.chess_board.play(source_coordinates, destination_coordinates)
+            self.play_sound(board)
+            TURN = not TURN
+
+        if IS_FIRST_MOVE:
+            IS_FIRST_MOVE = False
+        
+        turns_taken[turn] = not turns_taken[turn]
+        print(f"Setting {turns_taken[turn]} to {not turns_taken[turn]}")
+
+        self.pgn_text.set_text(
+            str(chess.pgn.Game().from_board(self.board))
+        )
 
     def click_handler(self, position):
         global SOURCE_POSITION, POSSIBLE_MOVES, TURN
@@ -190,12 +238,7 @@ class ChessApp:
                     self.chess_board.get_possible_moves(SOURCE_POSITION, remove_hints=True)
                     
                     # self.chess_board.play( SOURCE_POSITION, position )
-                    # play(SOURCE_POSITION, position)
-                    # SOURCE_POSITION = None
-                    
-                    current_player = players[TURN]
-        # else:
-        #     play()
+                    self.play(SOURCE_POSITION, position)
 
 
     def run(self):
