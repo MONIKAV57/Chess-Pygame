@@ -1,5 +1,5 @@
 # Chess-Pygame
-a chess game made with pygame with AI features included
+a chess game made with pygame with AI features includes, a AI bot opponent with a single player option 
 
 ## Installation
 The following are prerequisites to installing the program:
